@@ -1,12 +1,11 @@
+require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
-const bcrypt = require('bcrypt');
 const cors = require('cors');
-const db = require('knex')({
-  client: 'pg',
-  connection: process.env.DATABASE_URL,
-  searchPath: ['knex', 'public'],
-});
+
+const mongoose = require("mongoose");
+require("./db/connectToMongo")(mongoose);
 
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
@@ -18,13 +17,16 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => { res.send('It is working') })
-app.post('/signin', (req, res) => { signin.handleSignin(req, res, db, bcrypt) })
-app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) })
-app.get('/profile/:id', (req, res) => { profile.handleProfile(req, res, db) })
-app.put('/image', (req, res) => { image.handleImage(req, res, db) })
-app.post('/imageurl', (req, res) => { image.handleApiCall(req, res) })
+app.get('/', (req, res) => { res.send('The server is running!') })
 
-app.listen(process.env.PORT || 3000, () => {
+// Auth
+app.post('/signin', (req, res) => { signin.handleSignin(req, res) })
+app.post('/register', (req, res) => { register.handleRegister(req, res) })
+
+app.put('/image', (req, res) => { image.handleImage(req, res) })
+app.post('/imageurl', (req, res) => { image.handleApiCall(req, res) })
+app.get('/profile/:id', (req, res) => { profile.handleProfile(req, res, db) })
+
+app.listen(process.env.PORT, () => {
   console.log(`app is running on port ${process.env.PORT}`);
 })

@@ -1,6 +1,9 @@
-const handleProfile = (req, res, db) => {
+const UserModel = require('../db/models/user.js');
+
+const handleProfile = (req, res) => {
   const { id } = req.params;
 
+  
   db.select('*').from('users').where({id})
     .then(user => {
       if (user.length) {
