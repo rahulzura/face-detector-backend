@@ -14,9 +14,9 @@ const handleApiCall = async (req, res) => {
 const handleImage = async (req, res) => {
   const { email } = req.body;
   console.log("email", email)
-  const result = await UserModel.findOneAndUpdate({email}, { $inc: { imageCount: 1 }});
-  const newCount = ++result.imageCount;
-  res.json(newCount);
+  await UserModel.updateMany({email}, { $inc: { imageCount: 1 }});
+  const user = await UserModel.findOne({email});
+  res.json(user.imageCount);
 };
 
 module.exports = {

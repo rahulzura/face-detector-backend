@@ -11,13 +11,14 @@ const handleRegister = async (req, res) => {
   try {
     const existingUsers = await UserModel.find({email});
     if (existingUsers.length) {
-      res.json("User already exists");
+      res.json({status: 'fail', msg: "User already exists"});
       return;
     }
 
     const userData = {name, email, password: hash};
     const result = await UserModel.insertMany([userData]);
     console.log(result);
+    res.json({status: 'ok', user: {name: result.name, email: result.email, imageCount: result.imageCount}});
   } catch (err) {
     console.error(err);
     res.status(400).json('unable to register');
